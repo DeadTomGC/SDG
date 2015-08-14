@@ -174,8 +174,9 @@ class Module {
 }
 
 class Link {
-
+    public int x;
     public int y;
+    public int sizeX;
     public int sizeY;
     public Module left;
     public Module right;
