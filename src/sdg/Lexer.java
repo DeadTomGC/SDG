@@ -108,7 +108,13 @@ public class Lexer {
             errorMessage = "Error: incomplete line L" + line;
             return;
         }
-        if (!name.equals("")) {
+        if (name.equals("")) {
+            errorFlag = 1;
+            errorMessage = "Error: incomplete line L" + line;
+            return;
+        }
+        else
+        {
             state2(link, name);
         }
         character = dropSpaces(inputAr, character);
@@ -157,33 +163,37 @@ public class Lexer {
         links.add(link);
 
     }
-}
 
-class Module {
+    public class Module {
 
-    public int x = 0;
-    public int y = 0;
-    public int sizeX;
-    public int sizeY;
-    public String name;
-    public int index;
-    @Override
-    public String toString() {
-        return name;
+        public int x = 0;
+        public int y = 0;
+        public int sizeX;
+        public int sizeY;
+        public String name;
+        public int index;
+
+        @Override
+        public String toString() {
+            return name;
+        }
     }
-}
 
-class Link {
-    public int x;
-    public int y;
-    public int sizeX;
-    public int sizeY;
-    public Module left;
-    public Module right;
-    public String text;
-    public int index;
-    @Override
-    public String toString() {
-        return "" + left.toString() + " " + text + " " + right.toString();
+    public class Link {
+
+        public int x;
+        public int y;
+        public int sizeX;
+        public int sizeY;
+        public Module left;
+        public Module right;
+        public String text;
+        public int index;
+
+        @Override
+        public String toString() {
+            return "" + left.toString() + " " + text + " " + right.toString();
+        }
     }
+
 }

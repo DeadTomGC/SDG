@@ -97,14 +97,45 @@ public class Drawer {
             g.setColor(lineColor);
             g.fillRect(x-thickness/2, y, thickness, h);
     }
-    public int drawText(int x,int y,String text){
-        g.drawString(text, x, y);
-        int length=0;
-        length=g.getFontMetrics().stringWidth(text);
-        return length;
+    public void drawText(int xcenter,int ytop,String text){
+        g.setColor(lineColor);
+        int height = g.getFontMetrics().getHeight();
+        int lineCount = 1;
+        if(text.contains("\n")){
+            while(text.contains("\n")){
+                String line = text.substring(0,text.indexOf("\n"));
+                int length = g.getFontMetrics().stringWidth(line);
+                g.drawString(line, xcenter-length/2,ytop + height*lineCount - height/4);
+                lineCount++;
+                text = text.substring(text.indexOf("\n")+1);
+            }
+            int length = g.getFontMetrics().stringWidth(text);
+            g.drawString(text, xcenter-length/2,ytop + height*lineCount  - height/4);
+        }else{
+            int length = g.getFontMetrics().stringWidth(text);
+            g.drawString(text, xcenter-length/2,ytop + height*lineCount  - height/4);
+        }
     }
     public void setFont(Font font){
         g.setFont(font);
     }
-    
+    public void resizeImage(int x,int y){
+        iw=x;
+        ih=y;
+        image = new BufferedImage(iw,ih,BufferedImage.TYPE_INT_RGB);
+        g = image.createGraphics();
+        g.setColor(Color.white);
+        g.fillRect(0, 0, iw, ih);
+        
+    }
+    public int getHeight(){
+        return ih;
+    }
+    public int getWidth(){
+        return iw;
+    }
+    public void clear(){
+        g.setColor(background);
+        g.fillRect(0, 0, iw, ih);
+    }
 }

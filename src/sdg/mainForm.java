@@ -23,15 +23,13 @@ public class mainForm extends javax.swing.JFrame {
      */
     public mainForm() {
         initComponents();
-        drawer = new Drawer(imagePanel.getWidth(), imagePanel.getHeight());
-        //imagePanel.imageUpdate(image, WIDTH, WIDTH, WIDTH, WIDTH, WIDTH)
-        parser = new Lexer();
+        lexer = new Lexer();
         drawer = new Drawer(imagePanel.getWidth(), imagePanel.getHeight());
         ((SDPanel)imagePanel).setImage(drawer.image);
         renderer = new Parser(drawer);
     }
     private Drawer drawer;
-    private Lexer parser;
+    private Lexer lexer;
     private Parser renderer;
     /**
      * This method is called from within the constructor to initialize the form.
@@ -120,24 +118,16 @@ public class mainForm extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void updateButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_updateButtonActionPerformed
-        parser.lex(textBox.getText());
-        if (parser.errorFlag == 1) {
-            label1.setText(parser.errorMessage);
+        lexer.lex(textBox.getText());
+        if (lexer.errorFlag == 1) {
+            label1.setText(lexer.errorMessage);
         } else {
-            for (int i = 0; i < parser.links.size(); i++) {
-                textBox2.append(parser.links.get(i).toString() + "\n");
+            for (int i = 0; i < lexer.links.size(); i++) {
+                textBox2.append(lexer.links.get(i).toString() + "\n");
             }
-            renderer.parseAndRender(parser.links,parser.modules);
+            renderer.parseAndRender(lexer.links,lexer.modules);
         }
-        /*((SDPanel)imagePanel).setImage(drawer.image);
-        drawer.drawHook(100, 0, 100, 40, 5, 20, false);
-        drawer.drawHook(100, 0, 100, 40, 5, 20, true);
-        drawer.drawArrow(100, 100, 100, 3, false);
-        drawer.drawArrow(100, 100, 100, 3, true);
-        drawer.drawBox(50, 200, 100, 100,5);
-        drawer.drawVerticalLine(100, 300, 100, 5);
-        int drawText = drawer.drawText(75, 250,"Things");
-        drawer.drawBox(75, 250, drawText, drawText,5);*/
+        ((SDPanel)imagePanel).setImage(drawer.image);
         imagePanel.update(imagePanel.getGraphics());
     }//GEN-LAST:event_updateButtonActionPerformed
 

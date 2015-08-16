@@ -6,6 +6,8 @@
 package sdg;
 
 import java.util.ArrayList;
+import sdg.Lexer.Link;
+import sdg.Lexer.Module;
 
 /**
  *
@@ -16,6 +18,8 @@ public class Parser {
     Drawer drawer = null;
     int spacing = 10;
     int thickness = 3;
+    int loopHeight = 10;
+    int radius = 4;
 
     public Parser() {
 
@@ -26,12 +30,14 @@ public class Parser {
     }
 
     public void parseAndRender(ArrayList<Link> links, ArrayList<Module> modules) {
+
         int xPlace = spacing;
         int yPlace = spacing;
         Module tempMod;
         Link link1, link2, link3;
         int textDim[];
         int diff = 0;
+        drawer.clear();
         //give initial size and position
         for (int i = 0; i < modules.size(); i++) {
             tempMod = modules.get(i);
@@ -46,14 +52,18 @@ public class Parser {
         for (int i = 0; i < links.size(); i++) {
             link1 = links.get(i);
             textDim = getStringDim(link1.text);
-            link1.sizeY = textDim[1];
+            if (link1.left.index == link1.right.index) {
+                link1.sizeY = textDim[1] + loopHeight + (thickness * 3) / 2;
+            } else {
+                link1.sizeY = textDim[1] + (thickness * 3) / 2;
+            }
             link1.sizeX = textDim[0];
             if (link1.right.index >= link1.left.index) {
                 if (modules.size() > link1.left.index + 1) {
                     tempMod = modules.get(link1.right.index - 1);
                     diff = 0;
-                    if (tempMod.x + spacing * 2 + textDim[0] > link1.right.x) {
-                        diff = tempMod.x + spacing * 2 + textDim[0] - link1.right.x;
+                    if (tempMod.x + spacing * 2 + textDim[0] + thickness > link1.right.x) {
+                        diff = thickness + tempMod.x + spacing * 2 + textDim[0] - link1.right.x;
                         for (int j = link1.right.index; j < modules.size(); j++) {
                             modules.get(j).x += diff;
                         }
@@ -63,8 +73,8 @@ public class Parser {
 
                 tempMod = modules.get(link1.right.index + 1);
                 diff = 0;
-                if (tempMod.x < link1.right.x + spacing * 2 + textDim[0]) {
-                    diff = link1.right.x + spacing * 2 + textDim[0] - tempMod.x;
+                if (tempMod.x < thickness + link1.right.x + spacing * 2 + textDim[0]) {
+                    diff = thickness + link1.right.x + spacing * 2 + textDim[0] - tempMod.x;
                     for (int j = link1.right.index + 1; j < modules.size(); j++) {
                         modules.get(j).x += diff;
                     }
@@ -77,15 +87,59 @@ public class Parser {
         for (int i = 0; i < links.size(); i++) {
             link1 = links.get(i);
             if (i == 0) {
-                y = modules.get(i).y + spacing + modules.get(i).sizeY;
+                //get the bottom of the max sized module
+                for (int j = 0; j < modules.size(); j++) {
+                    tempMod = modules.get(j);
+                    if (tempMod.y + spacing + tempMod.sizeY > y) {
+                        y = tempMod.y + spacing + tempMod.sizeY;
+                    }
+                }
             }
             link1.y = y;
-            if(link1.right.index>link1.left.index){
-                link1.x = link1.right.x-link1.sizeX-spacing;
-            }else{
-                
+            if (link1.right.index > link1.left.index) {
+                link1.x = link1.right.x + link1.right.sizeX / 2 - link1.sizeX - spacing - thickness / 2;
+            } else {
+                link1.x = link1.right.x + link1.right.sizeX / 2 + spacing + thickness / 2;
             }
-            y+=spacing + link1.sizeY;
+            y += spacing + link1.sizeY;
+        }
+        //resize image
+        int height = y;
+        int width = 0;
+        if (modules.size() > 0) {
+            width = modules.get(modules.size() - 1).x + modules.get(modules.size() - 1).sizeX + 10;
+        }
+        
+        if (drawer.getWidth() < width) {
+            drawer.resizeImage(width, (int)(drawer.getHeight()*((float)width/drawer.getWidth())));
+        }
+        if (drawer.getHeight() < height) {
+            drawer.resizeImage( drawer.getWidth()*(height/drawer.getHeight()), height);
+        }
+        //render modules
+        for (int i = 0; i < modules.size(); i++) {
+            tempMod = modules.get(i);
+            textDim = getStringDim(tempMod.name);
+            drawer.drawBox(tempMod.x, tempMod.y, tempMod.sizeX, tempMod.sizeY, thickness);
+            drawer.drawText(tempMod.x + tempMod.sizeX / 2, tempMod.y + tempMod.sizeY / 2 - textDim[1] / 2, tempMod.name);
+            drawer.drawVerticalLine(tempMod.x + tempMod.sizeX / 2, tempMod.y + tempMod.sizeY, height - (tempMod.y + tempMod.sizeY), thickness);
+        }
+        //render links
+        for (int i = 0; i < links.size(); i++) {
+            link1 = links.get(i);
+            textDim = getStringDim(link1.text);
+            if (link1.left.index == link1.right.index) {
+                drawer.drawText(link1.x + textDim[0] / 2, link1.y, link1.text);
+                drawer.drawHook(link1.x - spacing, link1.y + textDim[1] + (thickness * 3) / 2, link1.sizeX + spacing, loopHeight, thickness, radius, false);
+
+            } else {
+                drawer.drawText(link1.x + textDim[0] / 2, link1.y, link1.text);
+                if (link1.left.index > link1.right.index) {
+                    drawer.drawArrow(link1.left.x + link1.left.sizeX / 2 + thickness / 2, link1.y + textDim[1] + (thickness * 3) / 2, (link1.left.x + link1.left.sizeX / 2) - (link1.right.x + link1.right.sizeX / 2), thickness, true);
+                } else {
+                    drawer.drawArrow(link1.left.x + link1.left.sizeX / 2 + thickness / 2, link1.y + textDim[1] + (thickness * 3) / 2, (link1.right.x + link1.right.sizeX / 2) - (link1.left.x + link1.left.sizeX / 2), thickness, false);
+                }
+            }
         }
     }
 
@@ -103,6 +157,7 @@ public class Parser {
                 text = text.substring(loc + 1);
             } else {
                 notOut = false;
+                lines--;
             }
             lines++;
         }
@@ -111,7 +166,11 @@ public class Parser {
         }
         if (longest == 0) {
             int loc = text.indexOf("\n");
-            longest = drawer.g.getFontMetrics().stringWidth(text.substring(0, loc));
+            if (loc > 0) {
+                longest = drawer.g.getFontMetrics().stringWidth(text.substring(0, loc));
+            } else {
+                longest = drawer.g.getFontMetrics().stringWidth(text);
+            }
         }
 
         int retVal[] = {longest, lines * drawer.g.getFontMetrics().getHeight()};
