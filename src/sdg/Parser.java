@@ -102,16 +102,16 @@ public class Parser {
             } else {
                 link1.x = link1.right.x + link1.right.sizeX / 2 + spacing + thickness / 2;
             }
-            if (link1.x + link1.sizeX + 10 > width) {
-                width = link1.x + link1.sizeX + 10;
+            if (link1.x + link1.sizeX + spacing > width) {
+                width = link1.x + link1.sizeX + spacing;
             }
             y += spacing + link1.sizeY;
         }
         //resize image
-        int height = y;
+        int height = y+spacing;
         //get largest width
-        if (modules.size() > 0 && modules.get(modules.size() - 1).x + modules.get(modules.size() - 1).sizeX + 10 > width) {
-            width = modules.get(modules.size() - 1).x + modules.get(modules.size() - 1).sizeX + 10;
+        if (modules.size() > 0 && modules.get(modules.size() - 1).x + modules.get(modules.size() - 1).sizeX + spacing > width) {
+            width = modules.get(modules.size() - 1).x + modules.get(modules.size() - 1).sizeX + spacing;
         }
         //resize
         if (0 < width && (int) (drawer.getHeight() * ((float) width / drawer.getWidth())) >= height) {
@@ -120,6 +120,7 @@ public class Parser {
         if (0 < height && (int) (drawer.getWidth() * ((float) height / drawer.getHeight())) >= width) {
             drawer.resizeImage((int) (drawer.getWidth() * ((float) height / drawer.getHeight())), height);
         }
+        height-=spacing;
         //render modules
         for (int i = 0; i < modules.size(); i++) {
             tempMod = modules.get(i);

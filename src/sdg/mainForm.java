@@ -38,6 +38,7 @@ public class mainForm extends javax.swing.JFrame {
     public ColorForm lineForm;
     public ColorForm objectForm;
     public JFileChooser fileChooser;
+
     /**
      * Creates new form mainForm
      */
@@ -221,18 +222,18 @@ public class mainForm extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void updateButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_updateButtonActionPerformed
-        
+
         renderer.thickness = (int) thicknessSelect.getValue();
         renderer.spacing = (int) spacingSelect.getValue();
         renderer.loopHeight = (int) loopHeightSelect.getValue();
-        renderer.radius = (renderer.loopHeight*4)/10;
+        renderer.radius = (renderer.loopHeight * 4) / 10;
         drawer.setFontColor(fontForm.color);
         drawer.setLineColor(lineForm.color);
         drawer.setObjectColor(objectForm.color);
         if (fontList.getSelectedIndex() >= 0) {
             drawer.setFont(fonts[fontList.getSelectedIndex()]);
         }
-        drawer.setFont(drawer.getFont().deriveFont(0,(int)fontSizeSelect.getValue()));
+        drawer.setFont(drawer.getFont().deriveFont(0, (int) fontSizeSelect.getValue()));
         lexer.lex(textBox.getText().trim());
         if (lexer.errorFlag == 1) {
             label1.setText(lexer.errorMessage);
@@ -245,42 +246,49 @@ public class mainForm extends javax.swing.JFrame {
     }//GEN-LAST:event_updateButtonActionPerformed
 
     private void saveButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_saveButtonActionPerformed
-        
+
         fileChooser.setDialogType(JFileChooser.SAVE_DIALOG);
-        fileChooser.setFileFilter(new FileNameExtensionFilter("Image Files (.bmp)",".bmp"));
+        fileChooser.setFileFilter(new FileNameExtensionFilter("Image Files (.bmp)", "bmp"));
         int returnVal = fileChooser.showSaveDialog(this);
-        if(JFileChooser.APPROVE_OPTION == returnVal){
+        if (JFileChooser.APPROVE_OPTION == returnVal) {
             File file = fileChooser.getSelectedFile();
+            String fileName = file.getAbsolutePath();
+            if(fileName.contains(".bmp")){
+                fileName = fileName.substring(0,fileName.indexOf(".bmp"));
+            }
             //label1.setText(file.getAbsolutePath());
             try {
-                BufferedWriter writer = new BufferedWriter(new FileWriter(file.getAbsolutePath()+".sdgt"));
-                writer.write((int) fontSizeSelect.getValue());
+                BufferedWriter writer = new BufferedWriter(new FileWriter(fileName + ".sdgt"));
+                writer.write(fontSizeSelect.getValue().toString());
                 writer.write(" ");
-                writer.write((int) thicknessSelect.getValue());
+                writer.write(thicknessSelect.getValue().toString());
                 writer.write(" ");
-                writer.write((int) spacingSelect.getValue());
+                writer.write(spacingSelect.getValue().toString());
                 writer.write(" ");
-                writer.write((int) loopHeightSelect.getValue());
+                writer.write(loopHeightSelect.getValue().toString());
                 writer.write(" ");
+                writer.write("" + fontForm.color.getRed() + " " + fontForm.color.getGreen() + " " + fontForm.color.getBlue() + " ");
+                writer.write("" + lineForm.color.getRed() + " " + lineForm.color.getGreen() + " " + lineForm.color.getBlue() + " ");
+                writer.write("" + objectForm.color.getRed() + " " + objectForm.color.getGreen() + " " + objectForm.color.getBlue());
                 //insert color info
                 writer.write("\n");
                 writer.write(textBox.getText(), 0, textBox.getText().length());
                 writer.close();
-                ImageIO.write(drawer.image, "BMP", new File(file.getAbsolutePath()+".bmp"));
+                ImageIO.write(drawer.image, "BMP", new File(fileName + ".bmp"));
             } catch (IOException ex) {
                 label1.setText(ex.toString());
             }
-            
+
         }
-        
+
     }//GEN-LAST:event_saveButtonActionPerformed
 
     private void fontColorSelectActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_fontColorSelectActionPerformed
-        fontForm.setVisible(true);        
+        fontForm.setVisible(true);
     }//GEN-LAST:event_fontColorSelectActionPerformed
 
     private void lineColorSelectActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_lineColorSelectActionPerformed
-        lineForm.setVisible(true);  
+        lineForm.setVisible(true);
     }//GEN-LAST:event_lineColorSelectActionPerformed
 
     private void objectColorSelectActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_objectColorSelectActionPerformed
@@ -289,9 +297,9 @@ public class mainForm extends javax.swing.JFrame {
 
     private void loadButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_loadButtonActionPerformed
         fileChooser.setDialogType(JFileChooser.OPEN_DIALOG);
-        fileChooser.setFileFilter(new FileNameExtensionFilter("Sequence Diagram Generator Text (.sdgt)",".sdgt"));
+        fileChooser.setFileFilter(new FileNameExtensionFilter("Sequence Diagram Generator Text (.sdgt)", "sdgt"));
         int returnVal = fileChooser.showOpenDialog(this);
-        if(JFileChooser.APPROVE_OPTION == returnVal){
+        if (JFileChooser.APPROVE_OPTION == returnVal) {
             File file = fileChooser.getSelectedFile();
             //label1.setText(file.getAbsolutePath());
             try {
@@ -300,11 +308,28 @@ public class mainForm extends javax.swing.JFrame {
                 thicknessSelect.setValue(reader.nextInt());
                 spacingSelect.setValue(reader.nextInt());
                 loopHeightSelect.setValue(reader.nextInt());
+
+                fontForm.colorChooser.setColor(reader.nextInt(), reader.nextInt(), reader.nextInt());
+                lineForm.colorChooser.setColor(reader.nextInt(), reader.nextInt(), reader.nextInt());
+                objectForm.colorChooser.setColor(reader.nextInt(), reader.nextInt(), reader.nextInt());
+                fontForm.color = fontForm.colorChooser.getColor();
+                lineForm.color = lineForm.colorChooser.getColor();
+                objectForm.color = objectForm.colorChooser.getColor();
+
+                StringBuilder builder = new StringBuilder();
+                while (reader.hasNextLine()) {
+                    String line = reader.nextLine();
+                    if (!line.trim().equals("")) {
+                        builder.append(line);
+                        builder.append("\n");
+                    }
+                }
+                textBox.setText(builder.toString());
                 //insert color info
             } catch (Exception ex) {
                 label1.setText(ex.toString());
             }
-            
+
         }
     }//GEN-LAST:event_loadButtonActionPerformed
 

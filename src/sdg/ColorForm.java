@@ -15,6 +15,7 @@ import java.awt.event.WindowEvent;
  */
 public class ColorForm extends javax.swing.JFrame {
     public Color color;
+    
     /**
      * Creates new form fileForm
      */
@@ -108,7 +109,7 @@ public class ColorForm extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JColorChooser colorChooser;
+    public javax.swing.JColorChooser colorChooser;
     private javax.swing.JButton jButton1;
     private javax.swing.JButton jButton2;
     // End of variables declaration//GEN-END:variables
