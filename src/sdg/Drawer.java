@@ -19,9 +19,12 @@ import static java.lang.Math.round;
 public class Drawer {
     public BufferedImage image;
     public Graphics2D g;
-    int iw,ih;
-    Color lineColor;
-    Color background;
+    private int iw,ih;
+    private Color lineColor;
+    private Color fontColor;
+    private Color background;
+    private Font font;
+    private Color objectColor;
     public Drawer(int w,int h){
         this.iw=w;
         this.ih=h;
@@ -29,7 +32,10 @@ public class Drawer {
         g = image.createGraphics();
         g.setColor(Color.white);
         g.fillRect(0, 0, w, h);
+        font = g.getFont();
         lineColor = Color.BLACK;
+        fontColor = Color.BLACK;
+        objectColor = Color.BLACK;
         background = Color.WHITE;
     }
     public boolean drawHook(int x,int y,int w,int h,int thickness,int radius,boolean flip){
@@ -78,27 +84,31 @@ public class Drawer {
         }
         else
         {
+            int addin = 0;
+            if((thickness & 1) != 0){
+                addin = 1;
+            }
             g.setColor(lineColor);
-            g.fillRect(x, y, w-thickness*3, thickness);
-            int arrowX[] = {x+w,x+w-thickness*3,x+w-thickness*3};
+            g.fillRect(x+addin, y, w-thickness*3, thickness);
+            int arrowX[] = {x+w+addin,x+w-thickness*3+addin,x+w-thickness*3+addin};
             int arrowY[] = {y+thickness/2,y+thickness/2+thickness*3,y+thickness/2-thickness*3};
             g.fillPolygon(arrowX, arrowY, 3);
         }
         
     }
     public void drawBox(int x,int y,int w,int h,int thickness){
-            g.setColor(lineColor);
+            g.setColor(objectColor);
             g.fillRect(x, y, w, h);
             g.setColor(background);
             g.fillRect(x+thickness, y+thickness, w-thickness*2, h-thickness*2);
     }
     
     public void drawVerticalLine(int x,int y,int h,int thickness){
-            g.setColor(lineColor);
+            g.setColor(objectColor);
             g.fillRect(x-thickness/2, y, thickness, h);
     }
     public void drawText(int xcenter,int ytop,String text){
-        g.setColor(lineColor);
+        g.setColor(fontColor);
         int height = g.getFontMetrics().getHeight();
         int lineCount = 1;
         if(text.contains("\n")){
@@ -118,6 +128,7 @@ public class Drawer {
     }
     public void setFont(Font font){
         g.setFont(font);
+        this.font = g.getFont();
     }
     public void resizeImage(int x,int y){
         iw=x;
@@ -126,8 +137,9 @@ public class Drawer {
         g = image.createGraphics();
         g.setColor(Color.white);
         g.fillRect(0, 0, iw, ih);
-        
+        g.setFont(font);
     }
+    
     public int getHeight(){
         return ih;
     }
@@ -137,5 +149,17 @@ public class Drawer {
     public void clear(){
         g.setColor(background);
         g.fillRect(0, 0, iw, ih);
+    }
+    public void setFontColor(Color color){
+        fontColor = color;
+    }
+    public void setLineColor(Color color){
+        lineColor = color;
+    }
+    public void setObjectColor(Color color){
+        objectColor = color;
+    }
+    public Font getFont(){
+        return font;
     }
 }

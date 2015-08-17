@@ -16,10 +16,10 @@ import sdg.Lexer.Module;
 public class Parser {
 
     Drawer drawer = null;
-    int spacing = 10;
-    int thickness = 3;
-    int loopHeight = 10;
-    int radius = 4;
+    public int spacing = 10;
+    public int thickness = 2;
+    public int loopHeight = 10;
+    public int radius = 4;
 
     public Parser() {
 
@@ -34,7 +34,7 @@ public class Parser {
         int xPlace = spacing;
         int yPlace = spacing;
         Module tempMod;
-        Link link1, link2, link3;
+        Link link1;
         int textDim[];
         int diff = 0;
         drawer.clear();
@@ -83,6 +83,7 @@ public class Parser {
         }
         // spaced modules and heights recorded
         // place labels 
+        int width = 0;
         int y = 0;
         for (int i = 0; i < links.size(); i++) {
             link1 = links.get(i);
@@ -101,20 +102,23 @@ public class Parser {
             } else {
                 link1.x = link1.right.x + link1.right.sizeX / 2 + spacing + thickness / 2;
             }
+            if (link1.x + link1.sizeX + 10 > width) {
+                width = link1.x + link1.sizeX + 10;
+            }
             y += spacing + link1.sizeY;
         }
         //resize image
         int height = y;
-        int width = 0;
-        if (modules.size() > 0) {
+        //get largest width
+        if (modules.size() > 0 && modules.get(modules.size() - 1).x + modules.get(modules.size() - 1).sizeX + 10 > width) {
             width = modules.get(modules.size() - 1).x + modules.get(modules.size() - 1).sizeX + 10;
         }
-        
-        if (drawer.getWidth() < width) {
-            drawer.resizeImage(width, (int)(drawer.getHeight()*((float)width/drawer.getWidth())));
+        //resize
+        if (0 < width && (int) (drawer.getHeight() * ((float) width / drawer.getWidth())) >= height) {
+            drawer.resizeImage(width, (int) (drawer.getHeight() * ((float) width / drawer.getWidth())));
         }
-        if (drawer.getHeight() < height) {
-            drawer.resizeImage( drawer.getWidth()*(height/drawer.getHeight()), height);
+        if (0 < height && (int) (drawer.getWidth() * ((float) height / drawer.getHeight())) >= width) {
+            drawer.resizeImage((int) (drawer.getWidth() * ((float) height / drawer.getHeight())), height);
         }
         //render modules
         for (int i = 0; i < modules.size(); i++) {
@@ -135,9 +139,9 @@ public class Parser {
             } else {
                 drawer.drawText(link1.x + textDim[0] / 2, link1.y, link1.text);
                 if (link1.left.index > link1.right.index) {
-                    drawer.drawArrow(link1.left.x + link1.left.sizeX / 2 + thickness / 2, link1.y + textDim[1] + (thickness * 3) / 2, (link1.left.x + link1.left.sizeX / 2) - (link1.right.x + link1.right.sizeX / 2), thickness, true);
+                    drawer.drawArrow(link1.left.x + link1.left.sizeX / 2 - thickness / 2, link1.y + textDim[1] + (thickness * 3) / 2, (link1.left.x + link1.left.sizeX / 2) - (link1.right.x + link1.right.sizeX / 2) - thickness, thickness, true);
                 } else {
-                    drawer.drawArrow(link1.left.x + link1.left.sizeX / 2 + thickness / 2, link1.y + textDim[1] + (thickness * 3) / 2, (link1.right.x + link1.right.sizeX / 2) - (link1.left.x + link1.left.sizeX / 2), thickness, false);
+                    drawer.drawArrow(link1.left.x + link1.left.sizeX / 2 + thickness / 2, link1.y + textDim[1] + (thickness * 3) / 2, (link1.right.x + link1.right.sizeX / 2) - (link1.left.x + link1.left.sizeX / 2) - thickness, thickness, false);
                 }
             }
         }

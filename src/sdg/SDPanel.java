@@ -15,7 +15,7 @@ import java.awt.Panel;
  */
 class SDPanel extends Panel
 {
-    public Image image = null;
+    public Drawer drawer = null;
     int w;
     int h;
     int imageWidth;
@@ -24,16 +24,16 @@ class SDPanel extends Panel
     {
         
     }
-    public void setImage(Image image){
-        this.image=image;
+    public void setDrawer(Drawer drawer){
+        this.drawer=drawer;
     }
     public void paint(Graphics g)
     {
         super.paint(g);
         w = getWidth();
         h = getHeight();
-        if(image!=null){
-            g.drawImage(image, 0, 0, w, h, this);
+        if(drawer!=null && drawer.image!=null){
+            g.drawImage(drawer.image, 0, 0, w, h, this);
         }
     }
 }

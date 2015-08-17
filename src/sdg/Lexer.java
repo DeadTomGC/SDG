@@ -102,7 +102,7 @@ public class Lexer {
                 character = dropSpaces(inputAr, character);
             }
         }
-        name = namebuilder.toString();
+        name = namebuilder.toString().trim();
         if (state == 1 || (!name.equals("") && state != 2)) {
             errorFlag = 1;
             errorMessage = "Error: incomplete line L" + line;

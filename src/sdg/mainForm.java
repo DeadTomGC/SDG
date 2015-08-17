@@ -5,12 +5,21 @@
  */
 package sdg;
 
-import java.awt.Color;
-import java.awt.Graphics;
-import java.awt.Image;
-import java.awt.Panel;
-import java.awt.image.BufferedImage;
-import java.util.ArrayList;
+import java.awt.Font;
+import javax.swing.ListModel;
+import java.awt.GraphicsEnvironment;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileFilter;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.util.Scanner;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.imageio.ImageIO;
+import javax.swing.DefaultListModel;
+import javax.swing.JFileChooser;
+import javax.swing.filechooser.FileNameExtensionFilter;
 
 /**
  *
@@ -18,19 +27,44 @@ import java.util.ArrayList;
  */
 public class mainForm extends javax.swing.JFrame {
 
+    private DefaultListModel model;
+    private GraphicsEnvironment e;
+    private Drawer drawer;
+    private Lexer lexer;
+    private Parser renderer;
+    private Font fonts[];
+    private float fontSize;
+    public ColorForm fontForm;
+    public ColorForm lineForm;
+    public ColorForm objectForm;
+    public JFileChooser fileChooser;
     /**
      * Creates new form mainForm
      */
     public mainForm() {
         initComponents();
+        fileChooser = new JFileChooser();
+        objectForm = new ColorForm();
+        fontForm = new ColorForm();
+        lineForm = new ColorForm();
+        fontSizeSelect.setValue(12);
+        thicknessSelect.setValue(2);
+        spacingSelect.setValue(10);
+        loopHeightSelect.setValue(10);
+        e = GraphicsEnvironment.getLocalGraphicsEnvironment();
         lexer = new Lexer();
         drawer = new Drawer(imagePanel.getWidth(), imagePanel.getHeight());
-        ((SDPanel)imagePanel).setImage(drawer.image);
+        ((SDPanel) imagePanel).setDrawer(drawer);
         renderer = new Parser(drawer);
+        model = new DefaultListModel();
+        fontList.setModel(model);
+        fonts = e.getAllFonts();
+        for (int i = 0; i < fonts.length; i++) {
+            model.addElement(fonts[i].getFontName());
+        }
+        fontSize = 12;
     }
-    private Drawer drawer;
-    private Lexer lexer;
-    private Parser renderer;
+
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -46,24 +80,46 @@ public class mainForm extends javax.swing.JFrame {
         updateButton = new javax.swing.JButton();
         label1 = new javax.swing.JLabel();
         jScrollPane2 = new javax.swing.JScrollPane();
-        textBox2 = new javax.swing.JTextArea();
+        fontList = new javax.swing.JList();
+        saveButton = new javax.swing.JButton();
+        lineColorSelect = new javax.swing.JButton();
+        fontSizeSelect = new javax.swing.JSpinner();
+        jLabel1 = new javax.swing.JLabel();
+        thicknessSelect = new javax.swing.JSpinner();
+        jLabel2 = new javax.swing.JLabel();
+        jLabel3 = new javax.swing.JLabel();
+        spacingSelect = new javax.swing.JSpinner();
+        fontColorSelect = new javax.swing.JButton();
+        jLabel4 = new javax.swing.JLabel();
+        loopHeightSelect = new javax.swing.JSpinner();
+        objectColorSelect = new javax.swing.JButton();
+        loadButton = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setMinimumSize(new java.awt.Dimension(1120, 590));
+        setPreferredSize(new java.awt.Dimension(1120, 590));
+        getContentPane().setLayout(null);
 
         javax.swing.GroupLayout imagePanelLayout = new javax.swing.GroupLayout(imagePanel);
         imagePanel.setLayout(imagePanelLayout);
         imagePanelLayout.setHorizontalGroup(
             imagePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 353, Short.MAX_VALUE)
+            .addGap(0, 520, Short.MAX_VALUE)
         );
         imagePanelLayout.setVerticalGroup(
             imagePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 0, Short.MAX_VALUE)
+            .addGap(0, 530, Short.MAX_VALUE)
         );
+
+        getContentPane().add(imagePanel);
+        imagePanel.setBounds(570, 10, 520, 530);
 
         textBox.setColumns(20);
         textBox.setRows(5);
         jScrollPane1.setViewportView(textBox);
+
+        getContentPane().add(jScrollPane1);
+        jScrollPane1.setBounds(10, 11, 270, 530);
 
         updateButton.setText("Update");
         updateButton.addActionListener(new java.awt.event.ActionListener() {
@@ -71,65 +127,186 @@ public class mainForm extends javax.swing.JFrame {
                 updateButtonActionPerformed(evt);
             }
         });
+        getContentPane().add(updateButton);
+        updateButton.setBounds(290, 10, 90, 23);
+        getContentPane().add(label1);
+        label1.setBounds(290, 40, 270, 20);
 
-        textBox2.setColumns(20);
-        textBox2.setRows(5);
-        jScrollPane2.setViewportView(textBox2);
+        fontList.setModel(new javax.swing.AbstractListModel() {
+            String[] strings = { "Item 1", "Item 2", "Item 3", "Item 4", "Item 5" };
+            public int getSize() { return strings.length; }
+            public Object getElementAt(int i) { return strings[i]; }
+        });
+        fontList.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
+        jScrollPane2.setViewportView(fontList);
 
-        javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
-        getContentPane().setLayout(layout);
-        layout.setHorizontalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 270, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(layout.createSequentialGroup()
-                        .addGap(47, 47, 47)
-                        .addComponent(updateButton))
-                    .addGroup(layout.createSequentialGroup()
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(label1, javax.swing.GroupLayout.PREFERRED_SIZE, 141, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(layout.createSequentialGroup()
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addGap(14, 14, 14)
-                .addComponent(imagePanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addContainerGap())
-        );
-        layout.setVerticalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(imagePanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jScrollPane1)
-                    .addGroup(layout.createSequentialGroup()
-                        .addGap(10, 10, 10)
-                        .addComponent(updateButton)
-                        .addGap(9, 9, 9)
-                        .addComponent(label1)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 76, Short.MAX_VALUE)
-                        .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 423, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addContainerGap())
-        );
+        getContentPane().add(jScrollPane2);
+        jScrollPane2.setBounds(290, 70, 270, 130);
+
+        saveButton.setText("Save");
+        saveButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                saveButtonActionPerformed(evt);
+            }
+        });
+        getContentPane().add(saveButton);
+        saveButton.setBounds(470, 10, 90, 23);
+
+        lineColorSelect.setText("Line Color Select");
+        lineColorSelect.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                lineColorSelectActionPerformed(evt);
+            }
+        });
+        getContentPane().add(lineColorSelect);
+        lineColorSelect.setBounds(350, 410, 150, 23);
+        getContentPane().add(fontSizeSelect);
+        fontSizeSelect.setBounds(430, 210, 120, 30);
+
+        jLabel1.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        jLabel1.setText("Font Size:");
+        getContentPane().add(jLabel1);
+        jLabel1.setBounds(300, 210, 130, 30);
+        getContentPane().add(thicknessSelect);
+        thicknessSelect.setBounds(430, 250, 120, 30);
+
+        jLabel2.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        jLabel2.setText("Line Thickness:");
+        getContentPane().add(jLabel2);
+        jLabel2.setBounds(300, 250, 130, 30);
+
+        jLabel3.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        jLabel3.setText("Loop Height:");
+        getContentPane().add(jLabel3);
+        jLabel3.setBounds(300, 330, 130, 30);
+        getContentPane().add(spacingSelect);
+        spacingSelect.setBounds(430, 290, 120, 30);
+
+        fontColorSelect.setText("Font Color Select");
+        fontColorSelect.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                fontColorSelectActionPerformed(evt);
+            }
+        });
+        getContentPane().add(fontColorSelect);
+        fontColorSelect.setBounds(350, 380, 150, 23);
+
+        jLabel4.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        jLabel4.setText("Spacing:");
+        getContentPane().add(jLabel4);
+        jLabel4.setBounds(300, 290, 130, 30);
+        getContentPane().add(loopHeightSelect);
+        loopHeightSelect.setBounds(430, 330, 120, 30);
+
+        objectColorSelect.setText("Object Color Select");
+        objectColorSelect.setToolTipText("");
+        objectColorSelect.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                objectColorSelectActionPerformed(evt);
+            }
+        });
+        getContentPane().add(objectColorSelect);
+        objectColorSelect.setBounds(350, 440, 150, 23);
+
+        loadButton.setText("Load");
+        loadButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                loadButtonActionPerformed(evt);
+            }
+        });
+        getContentPane().add(loadButton);
+        loadButton.setBounds(390, 10, 70, 23);
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
     private void updateButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_updateButtonActionPerformed
-        lexer.lex(textBox.getText());
+        
+        renderer.thickness = (int) thicknessSelect.getValue();
+        renderer.spacing = (int) spacingSelect.getValue();
+        renderer.loopHeight = (int) loopHeightSelect.getValue();
+        renderer.radius = (renderer.loopHeight*4)/10;
+        drawer.setFontColor(fontForm.color);
+        drawer.setLineColor(lineForm.color);
+        drawer.setObjectColor(objectForm.color);
+        if (fontList.getSelectedIndex() >= 0) {
+            drawer.setFont(fonts[fontList.getSelectedIndex()]);
+        }
+        drawer.setFont(drawer.getFont().deriveFont(0,(int)fontSizeSelect.getValue()));
+        lexer.lex(textBox.getText().trim());
         if (lexer.errorFlag == 1) {
             label1.setText(lexer.errorMessage);
         } else {
-            for (int i = 0; i < lexer.links.size(); i++) {
-                textBox2.append(lexer.links.get(i).toString() + "\n");
-            }
-            renderer.parseAndRender(lexer.links,lexer.modules);
+            renderer.parseAndRender(lexer.links, lexer.modules);
         }
-        ((SDPanel)imagePanel).setImage(drawer.image);
+        ((SDPanel) imagePanel).setDrawer(drawer);
         imagePanel.update(imagePanel.getGraphics());
+
     }//GEN-LAST:event_updateButtonActionPerformed
+
+    private void saveButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_saveButtonActionPerformed
+        
+        fileChooser.setDialogType(JFileChooser.SAVE_DIALOG);
+        fileChooser.setFileFilter(new FileNameExtensionFilter("Image Files (.bmp)",".bmp"));
+        int returnVal = fileChooser.showSaveDialog(this);
+        if(JFileChooser.APPROVE_OPTION == returnVal){
+            File file = fileChooser.getSelectedFile();
+            //label1.setText(file.getAbsolutePath());
+            try {
+                BufferedWriter writer = new BufferedWriter(new FileWriter(file.getAbsolutePath()+".sdgt"));
+                writer.write((int) fontSizeSelect.getValue());
+                writer.write(" ");
+                writer.write((int) thicknessSelect.getValue());
+                writer.write(" ");
+                writer.write((int) spacingSelect.getValue());
+                writer.write(" ");
+                writer.write((int) loopHeightSelect.getValue());
+                writer.write(" ");
+                //insert color info
+                writer.write("\n");
+                writer.write(textBox.getText(), 0, textBox.getText().length());
+                writer.close();
+                ImageIO.write(drawer.image, "BMP", new File(file.getAbsolutePath()+".bmp"));
+            } catch (IOException ex) {
+                label1.setText(ex.toString());
+            }
+            
+        }
+        
+    }//GEN-LAST:event_saveButtonActionPerformed
+
+    private void fontColorSelectActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_fontColorSelectActionPerformed
+        fontForm.setVisible(true);        
+    }//GEN-LAST:event_fontColorSelectActionPerformed
+
+    private void lineColorSelectActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_lineColorSelectActionPerformed
+        lineForm.setVisible(true);  
+    }//GEN-LAST:event_lineColorSelectActionPerformed
+
+    private void objectColorSelectActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_objectColorSelectActionPerformed
+        objectForm.setVisible(true);
+    }//GEN-LAST:event_objectColorSelectActionPerformed
+
+    private void loadButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_loadButtonActionPerformed
+        fileChooser.setDialogType(JFileChooser.OPEN_DIALOG);
+        fileChooser.setFileFilter(new FileNameExtensionFilter("Sequence Diagram Generator Text (.sdgt)",".sdgt"));
+        int returnVal = fileChooser.showOpenDialog(this);
+        if(JFileChooser.APPROVE_OPTION == returnVal){
+            File file = fileChooser.getSelectedFile();
+            //label1.setText(file.getAbsolutePath());
+            try {
+                Scanner reader = new Scanner(file);
+                fontSizeSelect.setValue(reader.nextInt());
+                thicknessSelect.setValue(reader.nextInt());
+                spacingSelect.setValue(reader.nextInt());
+                loopHeightSelect.setValue(reader.nextInt());
+                //insert color info
+            } catch (Exception ex) {
+                label1.setText(ex.toString());
+            }
+            
+        }
+    }//GEN-LAST:event_loadButtonActionPerformed
 
     /**
      * @param args the command line arguments
@@ -167,12 +344,25 @@ public class mainForm extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton fontColorSelect;
+    private javax.swing.JList fontList;
+    private javax.swing.JSpinner fontSizeSelect;
     private java.awt.Panel imagePanel;
+    private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jLabel2;
+    private javax.swing.JLabel jLabel3;
+    private javax.swing.JLabel jLabel4;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JLabel label1;
+    private javax.swing.JButton lineColorSelect;
+    private javax.swing.JButton loadButton;
+    private javax.swing.JSpinner loopHeightSelect;
+    private javax.swing.JButton objectColorSelect;
+    private javax.swing.JButton saveButton;
+    private javax.swing.JSpinner spacingSelect;
     private javax.swing.JTextArea textBox;
-    private javax.swing.JTextArea textBox2;
+    private javax.swing.JSpinner thicknessSelect;
     private javax.swing.JButton updateButton;
     // End of variables declaration//GEN-END:variables
 }
