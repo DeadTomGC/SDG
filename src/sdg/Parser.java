@@ -43,8 +43,8 @@ public class Parser {
             tempMod = modules.get(i);
             tempMod.x = xPlace;
             tempMod.y = yPlace;
-            xPlace += drawer.g.getFontMetrics().stringWidth(tempMod.name) + thickness * 2 + spacing * 3;
             textDim = getStringDim(tempMod.name);
+            xPlace += textDim[0] + thickness * 2 + spacing * 3;
             tempMod.sizeX = textDim[0] + spacing * 2 + 2 * thickness;
             tempMod.sizeY = textDim[1] + 2 * spacing + 2 * thickness;
         }
@@ -167,6 +167,11 @@ public class Parser {
             lines++;
         }
         if (!text.equals("")) {
+            int width = drawer.g.getFontMetrics().stringWidth(text);
+            if(width > longest)
+            {
+                longest = width;
+            }
             lines++;
         }
         if (longest == 0) {
