@@ -97,6 +97,7 @@ public class mainForm extends javax.swing.JFrame {
         loadButton = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setTitle("Sequence Diagram Generator");
         setMinimumSize(new java.awt.Dimension(1120, 590));
         setPreferredSize(new java.awt.Dimension(1120, 590));
         getContentPane().setLayout(null);
@@ -259,6 +260,8 @@ public class mainForm extends javax.swing.JFrame {
             //label1.setText(file.getAbsolutePath());
             try {
                 BufferedWriter writer = new BufferedWriter(new FileWriter(fileName + ".sdgt"));
+                writer.write(""+fontList.getSelectedIndex());
+                writer.write(" ");
                 writer.write(fontSizeSelect.getValue().toString());
                 writer.write(" ");
                 writer.write(thicknessSelect.getValue().toString());
@@ -304,6 +307,12 @@ public class mainForm extends javax.swing.JFrame {
             //label1.setText(file.getAbsolutePath());
             try {
                 Scanner reader = new Scanner(file);
+                int val = reader.nextInt();
+                
+                if(val>=0){
+                    fontList.setSelectedIndex(val);
+                }
+                
                 fontSizeSelect.setValue(reader.nextInt());
                 thicknessSelect.setValue(reader.nextInt());
                 spacingSelect.setValue(reader.nextInt());

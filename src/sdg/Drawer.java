@@ -30,7 +30,7 @@ public class Drawer {
         this.ih=h;
         image = new BufferedImage(w,h,BufferedImage.TYPE_INT_RGB);
         g = image.createGraphics();
-        g.setColor(Color.white);
+        g.setColor(background);
         g.fillRect(0, 0, w, h);
         font = g.getFont();
         lineColor = Color.BLACK;
@@ -135,7 +135,7 @@ public class Drawer {
         ih=y;
         image = new BufferedImage(iw,ih,BufferedImage.TYPE_INT_RGB);
         g = image.createGraphics();
-        g.setColor(Color.white);
+        g.setColor(background);
         g.fillRect(0, 0, iw, ih);
         g.setFont(font);
     }
