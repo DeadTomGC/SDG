@@ -6,16 +6,12 @@
 package sdg;
 
 import java.awt.Font;
-import javax.swing.ListModel;
 import java.awt.GraphicsEnvironment;
 import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileFilter;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.Scanner;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.imageio.ImageIO;
 import javax.swing.DefaultListModel;
 import javax.swing.JFileChooser;
@@ -38,6 +34,7 @@ public class mainForm extends javax.swing.JFrame {
     public ColorForm lineForm;
     public ColorForm objectForm;
     public JFileChooser fileChooser;
+    private int counter = 0;
 
     /**
      * Creates new form mainForm
@@ -131,6 +128,12 @@ public class mainForm extends javax.swing.JFrame {
         });
         getContentPane().add(updateButton);
         updateButton.setBounds(290, 10, 90, 23);
+
+        label1.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                label1MouseClicked(evt);
+            }
+        });
         getContentPane().add(label1);
         label1.setBounds(290, 40, 270, 20);
 
@@ -341,6 +344,13 @@ public class mainForm extends javax.swing.JFrame {
 
         }
     }//GEN-LAST:event_loadButtonActionPerformed
+
+    private void label1MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_label1MouseClicked
+        counter++;
+        if(counter == 5){
+            ((SDPanel) imagePanel).setEast(true);
+        }
+    }//GEN-LAST:event_label1MouseClicked
 
     /**
      * @param args the command line arguments
